@@ -1,0 +1,128 @@
+/*
+sass main.scss:main.css -w
+*/
+:root {
+  color-scheme: dark;
+  --cube-size: 10rem;
+  --air-image: none;
+  --stone-image: url("./assets/stone.png");
+  --grass-side-image: url("./assets/grass_side_carried.png");
+  --grass-top-image: url("./assets/grass_carried.png");
+  --dirt-image: url("./assets/dirt.png");
+  --log-image: url("./assets/log_oak.png");
+  --leaves-image: url("./assets/azalea_leaves.png");
+}
+
+body {
+  color: white;
+  background-color: lightSkyBlue;
+  block-size: 100vh;
+  block-size: 100dvb;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+  overflow: hidden;
+  perspective: 50rem;
+  perspective-origin: center center;
+  display: grid;
+  place-content: center center;
+}
+
+body, body * {
+  transform-style: preserve-3d;
+}
+
+label, button {
+  cursor: pointer;
+}
+
+h1, p {
+  margin: 0;
+}
+
+h1, strong {
+  font-weight: 600;
+}
+
+a {
+  color: inherit;
+}
+
+.content {
+  background-color: rgba(0, 255, 255, 0.4);
+}
+.content .blocks {
+  display: flex;
+  flex-direction: column;
+  animation: 20s linear infinite rotate;
+  background-color: rgba(255, 0, 0, 0.4);
+}
+.content .blocks > .layer-container {
+  block-size: var(--cube-size);
+  background-color: rgba(0, 255, 0, 0.4);
+  display: grid;
+  place-content: center;
+}
+.content .blocks > .layer-container > .layer {
+  rotate: x -100grad;
+  background-color: rgba(0, 0, 255, 0.4);
+  display: flex;
+  flex-direction: column;
+}
+.content .blocks > .layer-container > .layer > .row {
+  display: flex;
+}
+@keyframes rotate {
+  from {
+    rotate: y 0turn;
+  }
+  to {
+    rotate: y 1turn;
+  }
+}
+.cube {
+  position: relative;
+  rotate: x 100grad;
+  block-size: var(--cube-size);
+  inline-size: var(--cube-size);
+}
+.cube:has(> input[type=checkbox]:checked) {
+  opacity: 0;
+  pointer-events: none;
+}
+.cube > input[type=checkbox] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.cube > label {
+  position: absolute;
+  inset: 0;
+  background-image: var(--grass-side-image);
+  image-rendering: pixelated;
+  background-size: 100% 100%;
+  transform-origin: center center calc(-1 * var(--cube-size) / 2);
+  translate: 0 0 calc(var(--cube-size) / 2);
+}
+.cube > label.front {
+  rotate: y 0grad;
+}
+.cube > label.back {
+  rotate: y 200grad;
+}
+.cube > label.left {
+  rotate: y 100grad;
+}
+.cube > label.right {
+  rotate: y -100grad;
+}
+.cube > label.top {
+  rotate: x 100grad;
+  background-image: var(--grass-top-image);
+}
+.cube > label.bottom {
+  rotate: x -100grad;
+  background-image: var(--dirt-image);
+}
+
+/*# sourceMappingURL=main.css.map */
