@@ -6,7 +6,7 @@ sass main.scss:main.css -w
   --cube-size: 10rem;
   --air-image: none;
   --stone-image: url("./assets/stone.png");
-  --grass-side-image: url("./assets/grass_side_carried.png");
+  --grass-image: url("./assets/grass_side_carried.png");
   --grass-top-image: url("./assets/grass_carried.png");
   --dirt-image: url("./assets/dirt.png");
   --log-image: url("./assets/log_oak.png");
@@ -49,29 +49,14 @@ a {
 }
 
 .content {
-  background-color: rgba(0, 255, 255, 0.4);
-}
-.content .blocks {
-  display: flex;
-  flex-direction: column;
+  position: relative;
   animation: 20s linear infinite rotate;
-  background-color: rgba(255, 0, 0, 0.4);
 }
-.content .blocks > .layer-container {
-  block-size: var(--cube-size);
-  background-color: rgba(0, 255, 0, 0.4);
-  display: grid;
-  place-content: center;
+
+.blocks {
+  translate: calc(-0.5 * var(--columns) * var(--cube-size)) calc(-0.5 * var(--layers) * var(--cube-size)) calc(-0.5 * var(--rows) * var(--cube-size));
 }
-.content .blocks > .layer-container > .layer {
-  rotate: x -100grad;
-  background-color: rgba(0, 0, 255, 0.4);
-  display: flex;
-  flex-direction: column;
-}
-.content .blocks > .layer-container > .layer > .row {
-  display: flex;
-}
+
 @keyframes rotate {
   from {
     rotate: y 0turn;
@@ -80,49 +65,167 @@ a {
     rotate: y 1turn;
   }
 }
-.cube {
-  position: relative;
-  rotate: x 100grad;
+.cubes-container {
+  translate: calc(var(--column) * var(--cube-size)) calc(var(--layer) * var(--cube-size)) calc(var(--row) * var(--cube-size));
+}
+.cubes-container:has(> .cube.air > input[type=radio]:checked) {
+  display: none;
+}
+.cubes-container:has(> .cube.air > input[type=radio]:checked) {
+  --background-image: var(--air-image);
+}
+.cubes-container:has(> .cube.stone > input[type=radio]:checked) {
+  --background-image: var(--stone-image);
+}
+.cubes-container:has(> .cube.grass > input[type=radio]:checked) {
+  --background-image: var(--grass-image);
+}
+.cubes-container:has(> .cube.dirt > input[type=radio]:checked) {
+  --background-image: var(--dirt-image);
+}
+.cubes-container:has(> .cube.log > input[type=radio]:checked) {
+  --background-image: var(--log-image);
+}
+.cubes-container:has(> .cube.leaves > input[type=radio]:checked) {
+  --background-image: var(--leaves-image);
+}
+.cubes-container .cube {
+  position: absolute;
   block-size: var(--cube-size);
   inline-size: var(--cube-size);
 }
-.cube:has(> input[type=checkbox]:checked) {
-  opacity: 0;
-  pointer-events: none;
-}
-.cube > input[type=checkbox] {
+.cubes-container .cube > input[type=radio] {
   position: absolute;
   opacity: 0;
   pointer-events: none;
 }
-.cube > label {
+.cubes-container .cube > label {
   position: absolute;
   inset: 0;
-  background-image: var(--grass-side-image);
+  background-image: var(--background-image);
   image-rendering: pixelated;
   background-size: 100% 100%;
   transform-origin: center center calc(-1 * var(--cube-size) / 2);
   translate: 0 0 calc(var(--cube-size) / 2);
+  box-sizing: border-box;
 }
-.cube > label.front {
+.cubes-container .cube > label:hover {
+  --outline-width: 5px;
+  outline: var(--outline-width) solid white;
+  outline-offset: calc(-1 * var(--outline-width));
+}
+.cubes-container .cube > label.front {
   rotate: y 0grad;
 }
-.cube > label.back {
+.cubes-container .cube > label.back {
   rotate: y 200grad;
 }
-.cube > label.left {
+.cubes-container .cube > label.left {
   rotate: y 100grad;
 }
-.cube > label.right {
+.cubes-container .cube > label.right {
   rotate: y -100grad;
 }
-.cube > label.top {
+.cubes-container .cube > label.top {
   rotate: x 100grad;
+}
+.cubes-container .cube > label.bottom {
+  rotate: x -100grad;
+}
+.cubes-container:has(> .cube.grass > input[type=radio]:checked) > .cube > label.top {
   background-image: var(--grass-top-image);
 }
-.cube > label.bottom {
-  rotate: x -100grad;
+.cubes-container:has(> .cube.grass > input[type=radio]:checked) > .cube > label.bottom {
   background-image: var(--dirt-image);
+}
+
+.controls {
+  z-index: 1;
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.4);
+  background-color: rgba(34, 34, 34, 0.5333333333);
+  --backdrop-filter: blur(.3rem);
+  -webkit-backdrop-filter: var(--backdrop-filter);
+  backdrop-filter: var(--backdrop-filter);
+  padding: 0.75rem;
+  margin-block-end: 0.75rem;
+  inset-block-end: 0;
+  inset-inline: 0;
+  margin-inline: auto;
+  inline-size: fit-content;
+  max-inline-size: calc(100vw - 4rem);
+}
+.controls .block-chooser {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.controls .block-chooser > label {
+  display: block;
+  inline-size: 3rem;
+  block-size: 3rem;
+  border-radius: 0.3rem;
+  box-sizing: border-box;
+  outline-offset: -1px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+.controls .block-chooser > label.air {
+  background-color: lightSkyBlue;
+}
+.controls .block-chooser > label.air {
+  background-image: var(--air-image);
+}
+.controls .block-chooser > label.stone {
+  background-image: var(--stone-image);
+}
+.controls .block-chooser > label.grass {
+  background-image: var(--grass-image);
+}
+.controls .block-chooser > label.dirt {
+  background-image: var(--dirt-image);
+}
+.controls .block-chooser > label.log {
+  background-image: var(--log-image);
+}
+.controls .block-chooser > label.leaves {
+  background-image: var(--leaves-image);
+}
+.controls .block-chooser > label:hover {
+  outline: 3px solid silver;
+}
+.controls .block-chooser > label:has(> input[type=radio]:checked) {
+  outline: 3px solid white;
+}
+.controls .block-chooser > label > input[type=radio] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.controls:has(> .block-chooser > .air > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.air) {
+  display: none;
+}
+.controls:has(> .block-chooser > .stone > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.stone) {
+  display: none;
+}
+.controls:has(> .block-chooser > .grass > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.grass) {
+  display: none;
+}
+.controls:has(> .block-chooser > .dirt > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.dirt) {
+  display: none;
+}
+.controls:has(> .block-chooser > .log > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.log) {
+  display: none;
+}
+.controls:has(> .block-chooser > .leaves > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.leaves) {
+  display: none;
 }
 
 /*# sourceMappingURL=main.css.map */

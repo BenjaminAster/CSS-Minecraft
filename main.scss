@@ -1,3 +1,4 @@
+@use "sass:list";
 
 /*
 sass main.scss:main.css -w
@@ -18,7 +19,7 @@ $blocks: (
 
 	--air-image: none;
 	--stone-image: url("./assets/stone.png");
-	--grass-side-image: url("./assets/grass_side_carried.png");
+	--grass-image: url("./assets/grass_side_carried.png");
 	--grass-top-image: url("./assets/grass_carried.png");
 	--dirt-image: url("./assets/dirt.png");
 	--log-image: url("./assets/log_oak.png");
@@ -62,52 +63,106 @@ a {
 	color: inherit;
 }
 
-.content {
-	background-color: #0ff6;
+// .content {
+// 	background-color: #0ff6;
 
-	.blocks {
-		display: flex;
-		flex-direction: column;
+// 	.blocks {
+// 		display: flex;
+// 		flex-direction: column;
 
-		animation: 20s linear infinite rotate;
-		background-color: #f006;
+// 		animation: 20s linear infinite rotate;
+// 		background-color: #f006;
 
-		& > .layer-container {
-			block-size: var(--cube-size);
-			// inline-size: 40rem;
-			// outline: 1px solid red;
-			// outline-offset: -2px;
-			background-color: #0f06;
-			display: grid;
-			place-content: center;
+// 		& > .layer-container {
+// 			block-size: var(--cube-size);
+// 			// inline-size: 40rem;
+// 			// outline: 1px solid red;
+// 			// outline-offset: -2px;
+// 			background-color: #0f06;
+// 			display: grid;
+// 			place-content: center;
 
-			& > .layer {
-				rotate: x -100grad;
-				// block-size: 40rem;
-				// inline-size: 40rem;
-				// outline: 1px solid green;
-				// outline-offset: -4px;
-				background-color: #00f6;
-				display: flex;
-				flex-direction: column;
+// 			& > .layer {
+// 				rotate: x -100grad;
+// 				// block-size: 40rem;
+// 				// inline-size: 40rem;
+// 				// outline: 1px solid green;
+// 				// outline-offset: -4px;
+// 				background-color: #00f6;
+// 				display: flex;
+// 				flex-direction: column;
 				
-				& > .row {
-					display: flex;
-					// background-color: #f0f6;
+// 				& > .row {
+// 					display: flex;
+// 					// background-color: #f0f6;
 
-					& > .cube {
-						// block-size: var(--cube-size);
-						// inline-size: var(--cube-size);
-						// box-sizing: border-box;
+// 					& > .cube {
+// 						// block-size: var(--cube-size);
+// 						// inline-size: var(--cube-size);
+// 						// box-sizing: border-box;
 
-						// background-color: #0f07;
-						// background-clip: padding-box;
-						// border: 1rem solid transparent;
-					}
-				}
-			}
-		}
-	}
+// 						// background-color: #0f07;
+// 						// background-clip: padding-box;
+// 						// border: 1rem solid transparent;
+// 					}
+// 				}
+// 			}
+// 		}
+// 	}
+// }
+
+
+.content {
+	position: relative;
+	animation: 20s linear infinite rotate;
+}
+
+.blocks {
+	translate: calc(-.5 * var(--columns) * var(--cube-size)) calc(-.5 * var(--layers) * var(--cube-size)) calc(-.5 * var(--rows) * var(--cube-size));
+
+	// display: flex;
+	// flex-direction: column;
+	// gap: 1px;
+	// padding: 1px;
+	// background-color: gray;
+
+	// & .layer {
+	// 	display: flex;
+	// 	gap: 1px;
+	// }
+
+	// & .block {
+	// 	inline-size: var(--block-size);
+	// 	block-size: var(--block-size);
+	// 	position: relative;
+	// 	background-color: lightSkyBlue;
+	// 	background-size: 100% 100%;
+	// 	background-repeat: no-repeat;
+	// 	image-rendering: pixelated;
+
+	// 	& > label {
+	// 		display: block;
+	// 		block-size: 100%;
+	// 		inline-size: 100%;
+	// 		box-sizing: border-box;
+
+	// 		&:hover {
+	// 			border: 3px solid white;
+	// 		}
+	
+	// 		& > input[type=radio] {
+	// 			position: absolute;
+	// 			opacity: 0;
+	// 			pointer-events: none;
+	// 		}
+	// 	}
+
+	// 	@each $block in $blocks {
+	// 		&:has(> label.#{$block} > input[type=radio]:checked) {
+	// 			background-image: var(--#{$block}-image);
+	// 		}
+	// 	}
+	// }
 }
 
 // div:has(> .cube) {
@@ -123,57 +178,82 @@ a {
 	}
 }
 
-.cube {
-	position: relative;
-	rotate: x 100grad;
-	block-size: var(--cube-size);
-	inline-size: var(--cube-size);
+.cubes-container {
+	translate: calc(var(--column) * var(--cube-size)) calc(var(--layer) * var(--cube-size)) calc(var(--row) * var(--cube-size));
 
-	// animation: 10s linear infinite rotate;
-
-	&:has(> input[type=checkbox]:checked) {
-		opacity: 0;
-		pointer-events: none;
+	&:has(> .cube.#{list.nth($blocks, 1)} > input[type=radio]:checked) {
+		display: none;
 	}
 
-	& > input[type=checkbox] {
-		position: absolute;
-		opacity: 0;
-		pointer-events: none;
+	@each $block in $blocks {
+		&:has(> .cube.#{$block} > input[type=radio]:checked) {
+			--background-image: var(--#{$block}-image);
+		}
 	}
 
-	& > label {
+	.cube {
 		position: absolute;
-		inset: 0;
-		background-image: var(--grass-side-image);
-		image-rendering: pixelated;
-		background-size: 100% 100%;
-		// backface-visibility: hidden;
-		transform-origin: center center calc(-1 * var(--cube-size) / 2);
-		translate: 0 0 calc(var(--cube-size) / 2);
 
-		&:hover {
-			// opacity: .5;
+		// rotate: x 100grad;
+		block-size: var(--cube-size);
+		inline-size: var(--cube-size);
+		// animation: 10s linear infinite rotate;
+
+		& > input[type=radio] {
+			position: absolute;
+			opacity: 0;
+			pointer-events: none;
 		}
 
-		&.front {
-			rotate: y 0grad;
+		& > label {
+			position: absolute;
+			inset: 0;
+			background-image: var(--background-image);
+			image-rendering: pixelated;
+			background-size: 100% 100%;
+			// backface-visibility: hidden;
+			transform-origin: center center calc(-1 * var(--cube-size) / 2);
+			translate: 0 0 calc(var(--cube-size) / 2);
+			box-sizing: border-box;
+
+			&:hover {
+				--outline-width: 5px;
+				outline: var(--outline-width) solid white;
+				outline-offset: calc(-1 * var(--outline-width));
+			}
+
+			&.front {
+				rotate: y 0grad;
+			}
+			&.back {
+				rotate: y 200grad;
+			}
+			&.left {
+				rotate: y 100grad;
+			}
+			&.right {
+				rotate: y -100grad;
+			}
+			&.top {
+				rotate: x 100grad;
+				// background-image: var(--grass-top-image);
+			}
+			&.bottom {
+				rotate: x -100grad;
+				// background-image: var(--dirt-image);
+			}
 		}
-		&.back {
-			rotate: y 200grad;
-		}
-		&.left {
-			rotate: y 100grad;
-		}
-		&.right {
-			rotate: y -100grad;
-		}
+
+		// &.air > label {
+		// 	background-image: none;
+		// }
+	}
+	
+	&:has(> .cube.grass > input[type=radio]:checked) > .cube > label {
 		&.top {
-			rotate: x 100grad;
 			background-image: var(--grass-top-image);
 		}
 		&.bottom {
-			rotate: x -100grad;
 			background-image: var(--dirt-image);
 		}
 	}
@@ -247,113 +327,113 @@ a {
 // 	}
 // }
 
-// .controls {
-// 	z-index: 1;
-// 	position: absolute;
-// 	display: flex;
-// 	flex-wrap: wrap;
-// 	justify-content: center;
-// 	align-items: center;
-// 	gap: 1.25rem;
-// 	border-radius: 1rem;
-// 	box-shadow: 0 0 1.5rem #0006;
-// 	background-color: #2228;
-// 	--backdrop-filter: blur(.3rem);
-// 	-webkit-backdrop-filter: var(--backdrop-filter);
-// 	backdrop-filter: var(--backdrop-filter);
-// 	padding: .75rem;
-// 	margin-block-end: .75rem;
-// 	inset-block-end: 0;
-// 	inset-inline: 0;
-// 	margin-inline: auto;
-// 	inline-size: fit-content;
-// 	max-inline-size: calc(100vw - 4rem);
+.controls {
+	z-index: 1;
+	position: absolute;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 1.25rem;
+	border-radius: 1rem;
+	box-shadow: 0 0 1.5rem #0006;
+	background-color: #2228;
+	--backdrop-filter: blur(.3rem);
+	-webkit-backdrop-filter: var(--backdrop-filter);
+	backdrop-filter: var(--backdrop-filter);
+	padding: .75rem;
+	margin-block-end: .75rem;
+	inset-block-end: 0;
+	inset-inline: 0;
+	margin-inline: auto;
+	inline-size: fit-content;
+	max-inline-size: calc(100vw - 4rem);
 
-// 	& .block-chooser {
-// 		display: flex;
-// 		align-items: center;
-// 		gap: .5rem;
+	& .block-chooser {
+		display: flex;
+		align-items: center;
+		gap: .5rem;
 
-// 		& > label {
-// 			display: block;
-// 			inline-size: 3rem;
-// 			block-size: 3rem;
-// 			border-radius: .3rem;
-// 			box-sizing: border-box;
-// 			outline-offset: -1px;
-// 			background-size: 100% 100%;
-// 			background-repeat: no-repeat;
-// 			image-rendering: pixelated;
+		& > label {
+			display: block;
+			inline-size: 3rem;
+			block-size: 3rem;
+			border-radius: .3rem;
+			box-sizing: border-box;
+			outline-offset: -1px;
+			background-size: 100% 100%;
+			background-repeat: no-repeat;
+			image-rendering: pixelated;
 
-// 			&.air {
-// 				background-color: lightSkyBlue;
-// 			}
+			&.air {
+				background-color: lightSkyBlue;
+			}
 
-// 			@each $block in $blocks {
-// 				&.#{$block} {
-// 					background-image: var(--#{$block}-image);
-// 				}
-// 			}
+			@each $block in $blocks {
+				&.#{$block} {
+					background-image: var(--#{$block}-image);
+				}
+			}
 
-// 			&:hover {
-// 				outline: 3px solid silver;
-// 			}
+			&:hover {
+				outline: 3px solid silver;
+			}
 
-// 			&:has(> input[type=radio]:checked) {
-// 				outline: 3px solid white;
-// 			}
+			&:has(> input[type=radio]:checked) {
+				outline: 3px solid white;
+			}
 
-// 			& > input[type=radio] {
-// 				position: absolute;
-// 				opacity: 0;
-// 				pointer-events: none;
-// 			}
-// 		}
-// 	}
+			& > input[type=radio] {
+				position: absolute;
+				opacity: 0;
+				pointer-events: none;
+			}
+		}
+	}
 
-// 	& .move-buttons {
-// 		display: flex;
-// 		align-items: center;
-// 		gap: .5rem;
+	@each $block, $_ in $blocks {
+		&:has(> .block-chooser > .#{$block} > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.#{$block}) {
+			display: none;
+		}
+	}
 
-// 		& > button {
-// 			display: block;
-// 			inline-size: 3rem;
-// 			block-size: 3rem;
-// 			border: none;
-// 			border-radius: .3rem;
-// 			background-color: #0003;
-// 			font-size: 1.2rem;
+	// & .move-buttons {
+	// 	display: flex;
+	// 	align-items: center;
+	// 	gap: .5rem;
 
-// 			&:hover {
-// 				background-color: #0005;
-// 			}
+	// 	& > button {
+	// 		display: block;
+	// 		inline-size: 3rem;
+	// 		block-size: 3rem;
+	// 		border: none;
+	// 		border-radius: .3rem;
+	// 		background-color: #0003;
+	// 		font-size: 1.2rem;
 
-// 			&:active {
-// 				background-color: #0007;
-// 			}
-// 		}
-// 	}
+	// 		&:hover {
+	// 			background-color: #0005;
+	// 		}
 
-// 	@each $block, $_ in $blocks {
-// 		&:has(> .block-chooser > .#{$block} > input[type=radio]:checked) ~ .content .block > label:not(.#{$block}) {
-// 			display: none;
-// 		}
-// 	}
+	// 		&:active {
+	// 			background-color: #0007;
+	// 		}
+	// 	}
+	// }
 
-// 	&:has(> .move-buttons > .up:active) ~ .content .down {
-// 		animation-play-state: running;
-// 	}
-// 	&:has(> .move-buttons > .down:active) ~ .content .up {
-// 		animation-play-state: running;
-// 	}
-// 	&:has(> .move-buttons > .left:active) ~ .content .right {
-// 		animation-play-state: running;
-// 	}
-// 	&:has(> .move-buttons > .right:active) ~ .content .left {
-// 		animation-play-state: running;
-// 	}
-// }
+	// &:has(> .move-buttons > .up:active) ~ .content .down {
+	// 	animation-play-state: running;
+	// }
+	// &:has(> .move-buttons > .down:active) ~ .content .up {
+	// 	animation-play-state: running;
+	// }
+	// &:has(> .move-buttons > .left:active) ~ .content .right {
+	// 	animation-play-state: running;
+	// }
+	// &:has(> .move-buttons > .right:active) ~ .content .left {
+	// 	animation-play-state: running;
+	// }
+}
 
 // .content {
 // 	inline-size: fit-content;

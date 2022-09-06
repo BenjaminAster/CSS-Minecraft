@@ -4,7 +4,7 @@
 - const layers = 4;
 - const rows = 4;
 - const columns = 4;
-<html lang="en">
+<html lang="en" style="--layers: #{layers}; --rows: #{rows}; --columns: #{columns}">
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="description" content="A 2D Minecraft clone made with pure HTML &amp; CSS &ndash; no JavaScript." />
@@ -39,22 +39,22 @@
 	//- 	</label>
 	//- </section>
 
-	//- <section class="controls">
-	//- 	<div class="block-chooser">
-	//- 		each block in blocks
-	//- 			<label class="#{block}" title="#{block}">
-	//- 				<input type="radio" name="block-type" !{block === "stone" ? "checked" : ""} />
-	//- 			</label>
-	//- 		//- /each
-	//- 	</div>
+	<section class="controls">
+		<div class="block-chooser">
+			each block in blocks
+				<label class="#{block}" title="#{block}">
+					<input type="radio" name="block-type" !{block === "stone" ? "checked" : ""} />
+				</label>
+			//- /each
+		</div>
 
-	//- 	<div class="move-buttons">
-	//- 		<button class="up" title="move up">↑</button>
-	//- 		<button class="down" title="move down">↓</button>
-	//- 		<button class="left" title="move left">←</button>
-	//- 		<button class="right" title="move right">→</button>
-	//- 	</div>
-	//- </section>
+		<div class="move-buttons">
+			<button class="up" title="move up">↑</button>
+			<button class="down" title="move down">↓</button>
+			//- <button class="left" title="move left">←</button>
+			//- <button class="right" title="move right">→</button>
+		</div>
+	</section>
 
 	<main class="content">
 		//- <div class="up">
@@ -94,22 +94,39 @@
 		//- 					label(for="cube").top
 		//- 					label(for="cube").bottom
 
-		.blocks
+		<div class="blocks">
 			for _, layer in Array(layers)
-				.layer-container
-					.layer
-						for _, row in Array(rows)
-							.row
-								for _, column in Array(columns)
-									.cube
-										- const id = `cube-l${layer}-l${row}-c${column}`;
-										<input type="checkbox" id="#{id}" />
-										<label for="#{id}" class="front"></label>
-										<label for="#{id}" class="back"></label>
-										<label for="#{id}" class="left"></label>
-										<label for="#{id}" class="right"></label>
-										<label for="#{id}" class="top"></label>
-										<label for="#{id}" class="bottom"></label>
-
+				for _, row in Array(rows)
+					for _, column in Array(columns)
+						<div class="cubes-container" style="--layer: #{layer}; --row: #{row}; --column: #{column}">
+							- const selectedBlock = layer === layers - 1 ? "grass" : "air";
+							- const name = `cube-l${layer}-r${row}-c${column}`;
+							<div class="cube #{blocks[0]}">
+								- const id = `${name}-${blocks[0]}`;
+								<input type="radio" name="#{name}" id="#{id}" !{selectedBlock === blocks[0] ? "checked" : ""} />
+								<label for="#{id}" class="front"></label>
+								<label for="#{id}" class="back"></label>
+								<label for="#{id}" class="left"></label>
+								<label for="#{id}" class="right"></label>
+								<label for="#{id}" class="top"></label>
+								<label for="#{id}" class="bottom"></label>
+							</div>
+							each block, index in blocks.slice(1)
+								- const id = `${name}-${block}`;
+								- const checked = index === 0;
+								<div class="cube #{block}">
+									<input type="radio" name="#{name}" id="#{id}" !{selectedBlock === block ? "checked" : ""} />
+									<label for="cube-l#{layer}-r#{row + 1}-c#{column}-#{block}" class="front"></label>
+									<label for="cube-l#{layer}-r#{row - 1}-c#{column}-#{block}" class="back"></label>
+									<label for="cube-l#{layer}-r#{row}-c#{column + 1}-#{block}" class="left"></label>
+									<label for="cube-l#{layer}-r#{row}-c#{column - 1}-#{block}" class="right"></label>
+									<label for="cube-l#{layer - 1}-r#{row}-c#{column}-#{block}" class="top"></label>
+									<label for="cube-l#{layer + 1}-r#{row}-c#{column}-#{block}" class="bottom"></label>
+								</div>
+						</div>
+					//- /for
+				//- /for
+			//- /for
+		</div>
 	</main>
 </html>
