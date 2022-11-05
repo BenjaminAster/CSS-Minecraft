@@ -1,43 +1,52 @@
 <!DOCTYPE html>
 //- pug index.pug -w
-- const blocks = ["air", "stone", "grass", "dirt", "log", "leaves"];
-- const layers = 4;
-- const rows = 4;
-- const columns = 4;
+- const blocks = ["air", "stone", "grass", "dirt", "log", "leaves", "glass"];
+- const layers = 9;
+- const rows = 9;
+- const columns = 9;
 <html lang="en" style="--layers: #{layers}; --rows: #{rows}; --columns: #{columns}">
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta name="description" content="A 2D Minecraft clone made with pure HTML &amp; CSS &ndash; no JavaScript." />
-	<meta name="repository" content="https://github.com/BenjaminAster/2D-CSS-Minecraft" />
+	<meta name="description" content="A Minecraft clone made with pure HTML &amp; CSS &ndash; no JavaScript." />
+	<meta name="repository" content="https://github.com/BenjaminAster/CSS-Minecraft" />
 
 	<title>CSS Minecraft</title>
 
-	//- <link rel="icon" href="./assets/icon.png" />
+	<link rel="icon" href="./assets/icon.png" />
 
 	<link rel="stylesheet" href="./main.css" />
+
+	<link rel="preload" as="image" href="./assets/azalea_leaves.png" />
+	<link rel="preload" as="image" href="./assets/dirt.png" />
+	<link rel="preload" as="image" href="./assets/glass.png" />
+	<link rel="preload" as="image" href="./assets/grass_carried.png" />
+	<link rel="preload" as="image" href="./assets/grass_side_carried.png" />
+	<link rel="preload" as="image" href="./assets/log_oak.png" />
+	<link rel="preload" as="image" href="./assets/pickaxe.png" />
+	<link rel="preload" as="image" href="./assets/stone.png" />
 
 	<style>
 		- const sourceMap = { version: 3, sources: ["./index.pug"], mappings: "" };
 		| /*# sourceMappingURL=data:application/json;charset=utf-8,#{encodeURIComponent(JSON.stringify(sourceMap))} */
 	</style>
 
-	//- <section class="info">
-	//- 	<div class="text">
-	//- 		<h1>CSS Minecraft</h1>
-	//- 		<p>
-	//- 			| <strong>There is no JavaScript on this page.</strong> All the logic is made 100% with pure HTML & CSS. <br />
-	//- 			| View on <a href="https://github.com/BenjaminAster/CSS-Minecraft">GitHub</a>, <a href="">CodePen</a>, <a href="https://benjaminaster.com/css-minecraft/">benjaminaster.com</a>
-	//- 		</p>
-	//- 		<p class="not-supported">
-	//- 			| ⚠︎ Your browser does not support the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/:has">CSS <code>:has()</code> pseudo-class</a>, which is needed for this site to work.
-	//- 			| If you use Firefox, this is not yet implemented, so you have to either wait or try it out in a Chromium- or WebKit-based browser like Google Chrome, Microsoft Edge or Apple Safari.
-	//- 			| If you don't use Firefox, you are probably using an outdated version of your browser. Please update it: Chromium version ≥ 105 or Safari version ≥ 15.4 is required.
-	//- 		</p>
-	//- 	</div>
-	//- 	<label class="close" title="close">
-	//- 		<input type="checkbox" />
-	//- 	</label>
-	//- </section>
+	<section class="info">
+		<div class="text">
+			<h1>CSS Minecraft</h1>
+			<p>
+				| <strong>There is no JavaScript on this page.</strong> All the logic is made 100% with pure HTML & CSS. <br />
+				| View on <a href="https://github.com/BenjaminAster/CSS-Minecraft">GitHub</a>, <a href="https://codepen.io/Benjamin_Aster/pen/gOKwpOd">CodePen</a>, <a href="https://benjaminaster.com/css-minecraft/">benjaminaster.com</a>
+			</p>
+			<p class="not-supported">
+				| ⚠︎ Your browser does not support the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/:has">CSS <code>:has()</code> pseudo-class</a>, which is needed for this site to work.
+				| If you use Firefox, this is not yet implemented, so you have to either wait or try it out in a Chromium- or WebKit-based browser like Google Chrome, Microsoft Edge or Apple Safari.
+				| If you don't use Firefox, you are probably using an outdated version of your browser. Please update it: Chromium version ≥ 105 or Safari version ≥ 15.4 is required.
+			</p>
+		</div>
+		<label class="close" title="close">
+			<input type="checkbox" />
+		</label>
+	</section>
 
 	<section class="controls">
 		<div class="block-chooser">
@@ -49,84 +58,69 @@
 		</div>
 
 		<div class="move-buttons">
-			<button class="up" title="move up">↑</button>
-			<button class="down" title="move down">↓</button>
-			//- <button class="left" title="move left">←</button>
-			//- <button class="right" title="move right">→</button>
+			<button class="up" title="move up">⮅</button>
+			<button class="down" title="move down">⮇</button>
+			<button class="forwards" title="move forwards">⭡</button>
+			<button class="backwards" title="move backwards">⭣</button>
+			<button class="clockwise" title="rotate clockwise">↻</button>
+			<button class="counterclockwise" title="rotate counterclockwise">↺</button>
+			<button class="look-up" title="look up">🡡</button>
+			<button class="look-down" title="look down">🡣</button>
 		</div>
 	</section>
 
 	<main class="content">
-		//- <div class="up">
-		//- 	<div class="down">
-		//- 		<div class="left">
-		//- 			<div class="right">
-		//- 				<div class="blocks">
-		//- 					for _, layer in Array(layers)
-		//- 						<div class="layer">
-		//- 							for _, column in Array(columns)
-		//- 								<div class="block">
-		//- 									each block in blocks
-		//- 										<label class="#{block}">
-		//- 											<input type="radio" name="block-l#{layer}-c#{column}" !{block === (layer < layers - 5 ? "air" : (layer > layers - 5 ? "dirt" : "grass")) ? "checked" : ""} />
-		//- 										</label>
-		//- 									//- /each
-		//- 								</div>
-		//- 							//- /for
-		//- 						</div>
-		//- 					//- /for
-		//- 				</div>
-		//- 			</div>
-		//- 		</div>
-		//- 	</div>
-		//- </div>
-
-		//- div
-		//- 	div
-		//- 		div
-		//- 			div
-		//- 				.cube
-		//- 					input(type="checkbox")#cube
-		//- 					label(for="cube").front
-		//- 					label(for="cube").back
-		//- 					label(for="cube").left
-		//- 					label(for="cube").right
-		//- 					label(for="cube").top
-		//- 					label(for="cube").bottom
-
-		<div class="blocks">
-			for _, layer in Array(layers)
-				for _, row in Array(rows)
-					for _, column in Array(columns)
-						<div class="cubes-container" style="--layer: #{layer}; --row: #{row}; --column: #{column}">
-							- const selectedBlock = layer === layers - 1 ? "grass" : "air";
-							- const name = `cube-l${layer}-r${row}-c${column}`;
-							<div class="cube #{blocks[0]}">
-								- const id = `${name}-${blocks[0]}`;
-								<input type="radio" name="#{name}" id="#{id}" !{selectedBlock === blocks[0] ? "checked" : ""} />
-								<label for="#{id}" class="front"></label>
-								<label for="#{id}" class="back"></label>
-								<label for="#{id}" class="left"></label>
-								<label for="#{id}" class="right"></label>
-								<label for="#{id}" class="top"></label>
-								<label for="#{id}" class="bottom"></label>
-							</div>
-							each block, index in blocks.slice(1)
-								- const id = `${name}-${block}`;
-								- const checked = index === 0;
-								<div class="cube #{block}">
-									<input type="radio" name="#{name}" id="#{id}" !{selectedBlock === block ? "checked" : ""} />
-									<label for="cube-l#{layer}-r#{row + 1}-c#{column}-#{block}" class="front"></label>
-									<label for="cube-l#{layer}-r#{row - 1}-c#{column}-#{block}" class="back"></label>
-									<label for="cube-l#{layer}-r#{row}-c#{column + 1}-#{block}" class="left"></label>
-									<label for="cube-l#{layer}-r#{row}-c#{column - 1}-#{block}" class="right"></label>
-									<label for="cube-l#{layer - 1}-r#{row}-c#{column}-#{block}" class="top"></label>
-									<label for="cube-l#{layer + 1}-r#{row}-c#{column}-#{block}" class="bottom"></label>
+		<div class="look-up">
+			<div class="look-down">
+				<div class="initial-camera-position">
+					<div class="up">
+						<div class="down">
+							<div class="forwards">
+								<div class="backwards">
+									<div class="clockwise">
+										<div class="counterclockwise">
+											<div class="blocks">
+												for _, layer in Array(layers)
+													for _, row in Array(rows)
+														for _, column in Array(columns)
+															<div class="cubes-container" style="--layer: #{layer}; --row: #{row}; --column: #{column}">
+																- const selectedBlock = layer === layers - 1 ? "grass" : "air";
+																- const name = `cube-layer-${layer}-row-${row}-column-${column}`;
+																<div class="cube #{blocks[0]}">
+																	- const id = `${name}-${blocks[0]}`;
+																	<input type="radio" name="#{name}" id="#{id}" !{selectedBlock === blocks[0] ? "checked" : ""} />
+																	<label for="#{id}" class="front"></label>
+																	<label for="#{id}" class="back"></label>
+																	<label for="#{id}" class="left"></label>
+																	<label for="#{id}" class="right"></label>
+																	<label for="#{id}" class="top"></label>
+																	<label for="#{id}" class="bottom"></label>
+																</div>
+																each block, index in blocks.slice(1)
+																	- const id = `${name}-${block}`;
+																	- const checked = index === 0;
+																	<div class="cube #{block}">
+																		<input type="radio" name="#{name}" id="#{id}" !{selectedBlock === block ? "checked" : ""} />
+																		<label for="cube-layer-#{layer}-row-#{row + 1}-column-#{column}-#{block}" class="front"></label>
+																		<label for="cube-layer-#{layer}-row-#{row - 1}-column-#{column}-#{block}" class="back"></label>
+																		<label for="cube-layer-#{layer}-row-#{row}-column-#{column + 1}-#{block}" class="left"></label>
+																		<label for="cube-layer-#{layer}-row-#{row}-column-#{column - 1}-#{block}" class="right"></label>
+																		<label for="cube-layer-#{layer - 1}-row-#{row}-column-#{column}-#{block}" class="top"></label>
+																		<label for="cube-layer-#{layer + 1}-row-#{row}-column-#{column}-#{block}" class="bottom"></label>
+																	</div>
+															</div>
+														//- /for
+													//- /for
+												//- /for
+											</div>
+										</div>
+									</div>
 								</div>
+							</div>
 						</div>
-					//- /for
-				//- /for
-			//- /for
+					</div>
+				</div>
+			</div>
 		</div>
 	</main>
 </html>
