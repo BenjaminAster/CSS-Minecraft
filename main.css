@@ -14,9 +14,11 @@ sass main.scss:main.css -w
   --grass-top-image: url("./assets/grass_carried.png");
   --dirt-image: url("./assets/dirt.png");
   --log-image: url("./assets/log_oak.png");
+  --wood-image: url("./assets/oak_planks.png");
   --log-top-image: url("./assets/log_oak_top.png");
   --leaves-image: url("./assets/azalea_leaves.png");
   --glass-image: url("./assets/glass.png");
+  pointer-events: none;
 }
 
 body {
@@ -28,14 +30,8 @@ body {
   box-sizing: border-box;
   font-family: system-ui, sans-serif;
   overflow: hidden;
-  perspective: var(--camera-distance);
-  perspective-origin: center center;
   display: grid;
   place-content: center center;
-}
-
-body, body * {
-  transform-style: preserve-3d;
 }
 
 label, button {
@@ -55,6 +51,7 @@ a {
 }
 
 .info {
+  pointer-events: auto;
   z-index: 1;
   position: absolute;
   inset-block-start: 0;
@@ -112,20 +109,22 @@ a {
 }
 
 .controls {
-  z-index: 1;
+  pointer-events: auto;
+  z-index: 2;
   position: absolute;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 1.25rem;
-  border-radius: 1rem;
+  border-radius: 0.8rem;
   box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.4);
   background-color: rgba(34, 34, 34, 0.5333333333);
   --backdrop-filter: blur(.3rem);
   -webkit-backdrop-filter: var(--backdrop-filter);
   backdrop-filter: var(--backdrop-filter);
   padding: 0.75rem;
+  padding-block-start: 0.5rem;
   margin-block-end: 0.75rem;
   inset-block-end: 0;
   inset-inline: 0;
@@ -164,6 +163,9 @@ a {
 .controls .block-chooser > label.log {
   background-image: var(--log-image);
 }
+.controls .block-chooser > label.wood {
+  background-image: var(--wood-image);
+}
 .controls .block-chooser > label.leaves {
   background-image: var(--leaves-image);
 }
@@ -184,73 +186,97 @@ a {
   opacity: 0;
   pointer-events: none;
 }
-.controls:has(> .block-chooser > .air > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.air) {
+.controls:has(> .block-chooser > .air > input[type=radio]:checked) ~ main .cubes-container > .cube:not(.air) {
   display: none;
 }
-.controls:has(> .block-chooser > .stone > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.stone) {
+.controls:has(> .block-chooser > .stone > input[type=radio]:checked) ~ main .cubes-container > .cube:not(.stone) {
   display: none;
 }
-.controls:has(> .block-chooser > .grass > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.grass) {
+.controls:has(> .block-chooser > .grass > input[type=radio]:checked) ~ main .cubes-container > .cube:not(.grass) {
   display: none;
 }
-.controls:has(> .block-chooser > .dirt > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.dirt) {
+.controls:has(> .block-chooser > .dirt > input[type=radio]:checked) ~ main .cubes-container > .cube:not(.dirt) {
   display: none;
 }
-.controls:has(> .block-chooser > .log > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.log) {
+.controls:has(> .block-chooser > .log > input[type=radio]:checked) ~ main .cubes-container > .cube:not(.log) {
   display: none;
 }
-.controls:has(> .block-chooser > .leaves > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.leaves) {
+.controls:has(> .block-chooser > .wood > input[type=radio]:checked) ~ main .cubes-container > .cube:not(.wood) {
   display: none;
 }
-.controls:has(> .block-chooser > .glass > input[type=radio]:checked) ~ .content .cubes-container > .cube:not(.glass) {
+.controls:has(> .block-chooser > .leaves > input[type=radio]:checked) ~ main .cubes-container > .cube:not(.leaves) {
   display: none;
+}
+.controls:has(> .block-chooser > .glass > input[type=radio]:checked) ~ main .cubes-container > .cube:not(.glass) {
+  display: none;
+}
+.controls .block-chooser, .controls .move-button-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(auto, 1fr));
+  justify-items: center;
+  gap: 0.5rem;
+}
+.controls .block-chooser > *:not(.label), .controls .move-button-pair > *:not(.label) {
+  grid-row: 2;
+}
+.controls .block-chooser > .label, .controls .move-button-pair > .label {
+  grid-column: 1/span 2;
+}
+.controls .block-chooser > .label {
+  grid-column-end: span 8;
 }
 .controls .move-buttons {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1.25rem;
 }
-.controls .move-buttons > button {
-  display: block;
+.controls .move-buttons button {
+  display: grid;
+  place-content: center;
   inline-size: 3rem;
   block-size: 3rem;
   border: none;
   border-radius: 0.3rem;
   background-color: rgba(0, 0, 0, 0.2);
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
-.controls .move-buttons > button:hover {
+.controls .move-buttons button:hover {
   background-color: rgba(0, 0, 0, 0.3333333333);
 }
-.controls .move-buttons > button:active {
+.controls .move-buttons button:active {
   background-color: rgba(0, 0, 0, 0.4666666667);
 }
-.controls .move-buttons > button:is(.forwards, .clockwise, .look-up) {
-  margin-inline-start: 0.75rem;
-}
-.controls:has(> .move-buttons > .up:active) ~ .content .down {
+.controls:has(.up:active) ~ main .down {
   animation-play-state: running;
 }
-.controls:has(> .move-buttons > .down:active) ~ .content .up {
+.controls:has(.down:active) ~ main .up {
   animation-play-state: running;
 }
-.controls:has(> .move-buttons > .clockwise:active) ~ .content .clockwise {
+.controls:has(.clockwise:active) ~ main .clockwise {
   animation-play-state: running;
 }
-.controls:has(> .move-buttons > .counterclockwise:active) ~ .content .counterclockwise {
+.controls:has(.counterclockwise:active) ~ main .counterclockwise {
   animation-play-state: running;
 }
-.controls:has(> .move-buttons > .forwards:active) ~ .content .backwards {
+.controls:has(.forwards:active) ~ main .backwards {
   animation-play-state: running;
 }
-.controls:has(> .move-buttons > .backwards:active) ~ .content .forwards {
+.controls:has(.backwards:active) ~ main .forwards {
   animation-play-state: running;
 }
-.controls:has(> .move-buttons > .look-up:active) ~ .content .look-up {
+.controls:has(.look-up:active) ~ main .look-up {
   animation-play-state: running;
 }
-.controls:has(> .move-buttons > .look-down:active) ~ .content .look-down {
+.controls:has(.look-down:active) ~ main .look-down {
   animation-play-state: running;
+}
+
+main {
+  perspective: var(--camera-distance);
+  perspective-origin: center center;
+}
+main, main * {
+  transform-style: preserve-3d;
 }
 
 .content {
@@ -358,6 +384,7 @@ a {
   translate: calc(-0.5 * var(--columns) * var(--cube-size)) calc(-0.5 * var(--layers) * var(--cube-size)) calc(-0.5 * var(--rows) * var(--cube-size));
 }
 .content .blocks .cubes-container {
+  pointer-events: auto;
   translate: calc(var(--column) * var(--cube-size)) calc(var(--layer) * var(--cube-size)) calc(var(--row) * var(--cube-size));
 }
 .content .blocks .cubes-container:has(> .cube.air > input[type=radio]:checked) {
@@ -377,6 +404,9 @@ a {
 }
 .content .blocks .cubes-container:has(> .cube.log > input[type=radio]:checked) {
   --background-image: var(--log-image);
+}
+.content .blocks .cubes-container:has(> .cube.wood > input[type=radio]:checked) {
+  --background-image: var(--wood-image);
 }
 .content .blocks .cubes-container:has(> .cube.leaves > input[type=radio]:checked) {
   --background-image: var(--leaves-image);
@@ -404,28 +434,29 @@ a {
   translate: 0 0 calc(var(--cube-size) / 2);
   box-sizing: border-box;
 }
-.content .blocks .cubes-container .cube > label:hover {
-  --outline-width: calc(var(--cube-size) / 24);
-  outline: var(--outline-width) solid white;
-  outline-offset: calc(-1 * var(--outline-width));
-}
 .content .blocks .cubes-container .cube > label.front {
   rotate: y 0grad;
+  filter: brightness(92%);
 }
 .content .blocks .cubes-container .cube > label.back {
   rotate: y 200grad;
+  filter: brightness(68%);
 }
 .content .blocks .cubes-container .cube > label.left {
   rotate: y 100grad;
+  filter: brightness(76%);
 }
 .content .blocks .cubes-container .cube > label.right {
   rotate: y -100grad;
+  filter: brightness(84%);
 }
 .content .blocks .cubes-container .cube > label.top {
   rotate: x 100grad;
+  filter: brightness(100%);
 }
 .content .blocks .cubes-container .cube > label.bottom {
   rotate: x -100grad;
+  filter: brightness(60%);
 }
 .content .blocks .cubes-container:has(> .cube.grass > input[type=radio]:checked) > .cube > label.top {
   background-image: var(--grass-top-image);
@@ -435,6 +466,17 @@ a {
 }
 .content .blocks .cubes-container:has(> .cube.log > input[type=radio]:checked) > .cube > label:is(.top, bottom) {
   background-image: var(--log-top-image);
+}
+
+.cubes-container > .cube > label:hover,
+.controls:has(.air > input[type=radio]:checked) ~ main .cubes-container:hover > .cube > label {
+  --outline-width: calc(var(--cube-size) / 24);
+  outline: var(--outline-width) solid white;
+  outline-offset: calc(-1 * var(--outline-width));
+}
+
+.controls:has(.air > input[type=radio]:checked) ~ main .cubes-container:hover > .cube > label {
+  filter: brightness(70%);
 }
 
 /*# sourceMappingURL=main.css.map */
