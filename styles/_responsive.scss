@@ -1,0 +1,156 @@
+@use "sass:list";
+@use "tokens" as *;
+
+@media (max-width: 900px) {
+	.controls {
+		max-inline-size: calc(100vw - 1rem);
+
+		& .block-chooser {
+			grid-template-columns: repeat(list.length($blocks), 3rem);
+
+			& > label {
+				inline-size: 3rem;
+				block-size: 3rem;
+			}
+		}
+
+		& .move-buttons {
+			flex-wrap: wrap;
+		}
+	}
+}
+
+@media (max-width: 700px) {
+	:root {
+		--cube-size: 4.35rem;
+		--camera-distance: 46rem;
+	}
+
+	.info {
+		inset-block-start: .5rem;
+		inline-size: calc(100vw - 1rem);
+		padding: .7rem;
+		border-radius: .7rem;
+		max-block-size: 38vh;
+		overflow: auto;
+
+		& .quick-help {
+			grid-template-columns: 1fr;
+		}
+
+		& .intro, & .links {
+			font-size: .8rem;
+		}
+
+		& .world-status span {
+			font-size: .6rem;
+		}
+	}
+
+	.controls {
+		inset-block-end: .5rem;
+		inline-size: calc(100vw - 1rem);
+		max-inline-size: calc(100vw - 1rem);
+		overflow-x: auto;
+		justify-content: flex-start;
+		scrollbar-width: thin;
+		padding: .45rem;
+
+		& .hud-panel {
+			padding: .45rem;
+			border-radius: .65rem;
+		}
+
+		& .label {
+			font-size: .62rem;
+		}
+
+		& .mode-panel {
+			min-inline-size: 10rem;
+		}
+
+		& .mode-status {
+			min-block-size: 2.85rem;
+			padding: .45rem .55rem;
+		}
+
+		& .mode-message {
+			font-size: .66rem;
+		}
+
+		& .hint-panel {
+			min-inline-size: 9.5rem;
+		}
+
+		& .hud-hints {
+			padding: .45rem .55rem;
+
+			& span {
+				font-size: .6rem;
+			}
+		}
+
+		& .block-chooser {
+			grid-template-columns: repeat(list.length($blocks), 2.85rem);
+
+			& > label {
+				inline-size: 2.85rem;
+				block-size: 2.85rem;
+			}
+		}
+
+		& .move-buttons {
+			gap: .4rem;
+			flex-wrap: nowrap;
+		}
+
+		& .move-button-pair {
+			grid-template-columns: repeat(2, 2.45rem);
+			grid-template-rows: auto 2.45rem;
+		}
+
+		& .move-button-pair > .control-label {
+			font-size: .58rem;
+		}
+
+		& button {
+			inline-size: 2.45rem;
+			block-size: 2.45rem;
+			font-size: 1.15rem;
+		}
+	}
+}
+
+@media (max-height: 640px) {
+	.info {
+		max-block-size: 34vh;
+		overflow: auto;
+
+		& .quick-help {
+			display: none;
+		}
+	}
+
+	.controls {
+		scale: .92;
+		transform-origin: center bottom;
+	}
+}
+
+@media (max-height: 520px) {
+	.info {
+		display: none;
+	}
+
+	.controls {
+		scale: .86;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.controls .block-chooser > label,
+	.controls button,
+	.controls .slot-name {
+		transition: none;
+	}
+}

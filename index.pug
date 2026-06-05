@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 //- pug index.pug -w
+
+//-
+//- World configuration
+//-
+//- This project renders the world directly in the DOM.
+//- Increasing these values can quickly make the page slower because every
+//- position creates one radio group with one cube option per block type.
+//-
+//- Total positions: layers * rows * columns
+//- Default world: 9 * 9 * 9 = 729 positions
+//- Current block types: 8
+//-
+
+- const worldPresets = { small: { layers: 7, rows: 7, columns: 7 }, default: { layers: 9, rows: 9, columns: 9 }, large: { layers: 11, rows: 11, columns: 11 }, experimental: { layers: 13, rows: 13, columns: 13 } };
+- const activeWorldPreset = "default";
+- const world = worldPresets[activeWorldPreset];
+
+- const layers = world.layers;
+- const rows = world.rows;
+- const columns = world.columns;
+- const totalPositions = layers * rows * columns;
+
 - const blocks = ["air", "stone", "grass", "dirt", "log", "wood", "leaves", "glass"];
-- const layers = 9;
-- const rows = 9;
-- const columns = 9;
+- const blockLabels = { air: "Remove block", stone: "Stone", grass: "Grass", dirt: "Dirt", log: "Oak log", wood: "Oak planks", leaves: "Leaves", glass: "Glass" };
+
 <html lang="en" style="--layers: #{layers}; --rows: #{rows}; --columns: #{columns}">
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,6 +44,8 @@
 	<link rel="preload" as="image" href="./assets/grass_carried.png" />
 	<link rel="preload" as="image" href="./assets/grass_side_carried.png" />
 	<link rel="preload" as="image" href="./assets/log_oak.png" />
+	<link rel="preload" as="image" href="./assets/log_oak_top.png" />
+	<link rel="preload" as="image" href="./assets/oak_planks.png" />
 	<link rel="preload" as="image" href="./assets/pickaxe.png" />
 	<link rel="preload" as="image" href="./assets/stone.png" />
 
@@ -31,53 +54,120 @@
 		| /*# sourceMappingURL=data:application/json;charset=utf-8,#{encodeURIComponent(JSON.stringify(sourceMap))} */
 	</style>
 
-	<section class="info">
+	<section class="info" aria-label="Game information">
 		<div class="text">
-			<h1>CSS Minecraft</h1>
-			<p>
-				| <strong>There is no JavaScript on this page.</strong> All the logic is made 100% with pure HTML & CSS. For the best performance, please close other tabs and running programs.<br />
+			<div class="info-header">
+				<p class="eyebrow">Pure HTML & CSS sandbox</p>
+				<h1>CSS Minecraft</h1>
+
+				<div class="world-status" aria-label="Current world status">
+					<span>CSS-only</span>
+					<span>Preset: #{activeWorldPreset}</span>
+					<span>World: #{layers} × #{rows} × #{columns}</span>
+					<span>#{totalPositions} positions</span>
+				</div>
+			</div>
+
+			<p class="intro">
+				| Build, remove and explore a tiny block world without JavaScript. Everything runs with HTML inputs, CSS selectors and 3D transforms.
+			</p>
+
+			<div class="quick-help" aria-label="Quick gameplay instructions">
+				<p>
+					<strong>Build:</strong>
+					|  choose a block and click a cube face.
+				</p>
+				<p>
+					<strong>Remove:</strong>
+					|  select the pickaxe and click a block.
+				</p>
+				<p>
+					<strong>Move:</strong>
+					|  hold the control buttons below.
+				</p>
+			</div>
+
+			<p class="links">
 				| View on <a href="https://github.com/BenjaminAster/CSS-Minecraft">GitHub</a>, <a href="https://codepen.io/Benjamin_Aster/pen/gOKwpOd">CodePen</a>, <a href="https://benjaminaster.com/css-minecraft/">benjaminaster.com</a>
 			</p>
+
 			<p class="not-supported">
-				| ⚠︎ Your browser does not support the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/:has">CSS <code>:has()</code> pseudo-class</a>, which is needed for this site to work.
+				| Your browser does not support the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/:has">CSS <code>:has()</code> pseudo-class</a>, which is needed for this site to work.
 				| Please update it: Chromium version ≥ 105, Safari version ≥ 15.4 or Firefox version ≥ 121 is required.
 			</p>
 		</div>
-		<label class="close" title="close">
+
+		<label class="close" title="Close information panel" aria-label="Close information panel">
 			<input type="checkbox" />
 		</label>
 	</section>
 
-	<section class="controls">
-		<div class="block-chooser">
-			<span class="label">Block type</span>
-			each block in blocks
-				<label class="#{block}" title="#{block}">
-					<input type="radio" name="block-type" !{block === "stone" ? "checked" : ""} />
-				</label>
-			//- /each
+	<section class="controls" aria-label="Game controls">
+		<div class="hud-panel inventory-panel">
+			<span class="label">Inventory</span>
+
+			<div class="block-chooser" aria-label="Block inventory">
+				each block in blocks
+					<label class="#{block}" title="#{blockLabels[block]}" aria-label="#{blockLabels[block]}">
+						<input type="radio" name="block-type" !{block === "stone" ? "checked" : ""} />
+						<span class="slot-name">#{blockLabels[block]}</span>
+					</label>
+				//- /each
+			</div>
 		</div>
 
-		<div class="move-buttons">
-			<div class="move-button-pair">
-				<span class="label">Vertical</span>
-				<button class="up icon:arrow-circle-up" title="Move upwards"></button>
-				<button class="down icon:arrow-circle-down" title="Move downwards"></button>
+		<div class="hud-panel mode-panel" aria-label="Current interaction mode">
+			<span class="label">Current mode</span>
+
+			<div class="mode-status">
+				<span class="mode-message air">Removing blocks</span>
+				<span class="mode-message stone">Building with Stone</span>
+				<span class="mode-message grass">Building with Grass</span>
+				<span class="mode-message dirt">Building with Dirt</span>
+				<span class="mode-message log">Building with Oak Log</span>
+				<span class="mode-message wood">Building with Oak Planks</span>
+				<span class="mode-message leaves">Building with Leaves</span>
+				<span class="mode-message glass">Building with Glass</span>
 			</div>
-			<div class="move-button-pair">
-				<span class="label">Horizontal</span>
-				<button class="forwards icon:arrow-upward" title="Move forwards"></button>
-				<button class="backwards icon:arrow-downward" title="Move backwards"></button>
+		</div>
+
+		<div class="hud-panel hint-panel" aria-label="Quick control hints">
+			<span class="label">Hints</span>
+
+			<div class="hud-hints">
+				<span>Click face to build</span>
+				<span>Pickaxe removes</span>
+				<span>Hold buttons to move</span>
 			</div>
-			<div class="move-button-pair">
-				<span class="label">Rotation</span>
-				<button class="clockwise icon:rotate-right" title="Rotate clockwise"></button>
-				<button class="counterclockwise icon:rotate-left" title="Rotate counterclockwise"></button>
-			</div>
-			<div class="move-button-pair">
-				<span class="label">View</span>
-				<button class="look-up icon:keyboard-arrow-up" title="Look up"></button>
-				<button class="look-down icon:keyboard-arrow-down" title="Look down"></button>
+		</div>
+
+		<div class="hud-panel movement-panel">
+			<span class="label">Movement</span>
+
+			<div class="move-buttons">
+				<div class="move-button-pair">
+					<span class="control-label">Vertical</span>
+					<button type="button" class="up icon:arrow-circle-up" title="Move upwards" aria-label="Move upwards"></button>
+					<button type="button" class="down icon:arrow-circle-down" title="Move downwards" aria-label="Move downwards"></button>
+				</div>
+
+				<div class="move-button-pair">
+					<span class="control-label">Horizontal</span>
+					<button type="button" class="forwards icon:arrow-upward" title="Move forwards" aria-label="Move forwards"></button>
+					<button type="button" class="backwards icon:arrow-downward" title="Move backwards" aria-label="Move backwards"></button>
+				</div>
+
+				<div class="move-button-pair">
+					<span class="control-label">Rotation</span>
+					<button type="button" class="clockwise icon:rotate-right" title="Rotate clockwise" aria-label="Rotate clockwise"></button>
+					<button type="button" class="counterclockwise icon:rotate-left" title="Rotate counterclockwise" aria-label="Rotate counterclockwise"></button>
+				</div>
+
+				<div class="move-button-pair">
+					<span class="control-label">View</span>
+					<button type="button" class="look-up icon:keyboard-arrow-up" title="Look up" aria-label="Look up"></button>
+					<button type="button" class="look-down icon:keyboard-arrow-down" title="Look down" aria-label="Look down"></button>
+				</div>
 			</div>
 		</div>
 	</section>
@@ -110,9 +200,8 @@
 																		<label for="#{id}" class="top"></label>
 																		<label for="#{id}" class="bottom"></label>
 																	</div>
-																	each block, index in blocks.slice(1)
+																	each block in blocks.slice(1)
 																		- const id = `${name}-${block}`;
-																		- const checked = index === 0;
 																		<div class="cube #{block}">
 																			<input type="radio" name="#{name}" id="#{id}" !{selectedBlock === block ? "checked" : ""} />
 																			<label for="cube-layer-#{layer}-row-#{row + 1}-column-#{column}-#{block}" class="front"></label>

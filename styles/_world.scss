@@ -1,0 +1,235 @@
+@use "sass:list";
+@use "tokens" as *;
+
+main {
+	perspective: var(--camera-distance);
+	perspective-origin: center center;
+
+	&, & * {
+		transform-style: preserve-3d;
+	}
+}
+
+.content {
+	rotate: x -50grad;
+
+	--animation-duration: 10000s;
+	--max-translation: 400000rem;
+	--max-rotation: 3000turn;
+
+	& .initial-camera-position {
+		translate: 0 calc(var(--layers) * var(--cube-size) * .4) calc(var(--camera-distance) - var(--rows) * var(--cube-size) * .9);
+	}
+
+	&, & .look-up, & .look-down {
+		transform-origin: 0 0 var(--camera-distance);
+	}
+
+	& .look-up {
+		animation: var(--animation-duration) linear 1ms paused look-up;
+
+		@keyframes look-up {
+			from {
+				rotate: x 0turn;
+			}
+
+			to {
+				rotate: x calc(var(--max-rotation));
+			}
+		}
+	}
+
+	& .look-down {
+		animation: var(--animation-duration) linear 1ms paused look-down;
+
+		@keyframes look-down {
+			from {
+				rotate: x 0turn;
+			}
+
+			to {
+				rotate: x calc(-1 * var(--max-rotation));
+			}
+		}
+	}
+
+	& .down {
+		animation: var(--animation-duration) linear 1ms paused move-down;
+
+		@keyframes move-down {
+			from {
+				translate: 0 0;
+			}
+
+			to {
+				translate: 0 calc(var(--max-translation));
+			}
+		}
+	}
+
+	& .up {
+		animation: var(--animation-duration) linear 1ms paused move-up;
+
+		@keyframes move-up {
+			from {
+				translate: 0 0;
+			}
+
+			to {
+				translate: 0 calc(-1 * var(--max-translation));
+			}
+		}
+	}
+
+	& .forwards {
+		animation: var(--animation-duration) linear 1ms paused move-forwards;
+
+		@keyframes move-forwards {
+			from {
+				translate: 0 0 0;
+			}
+
+			to {
+				translate: 0 0 calc(-1 * var(--max-translation));
+			}
+		}
+	}
+
+	& .backwards {
+		animation: var(--animation-duration) linear 1ms paused move-backwards;
+
+		@keyframes move-backwards {
+			from {
+				translate: 0 0 0;
+			}
+
+			to {
+				translate: 0 0 calc(var(--max-translation));
+			}
+		}
+	}
+
+	& .clockwise {
+		animation: var(--animation-duration) linear 1ms paused rotate-clockwise;
+
+		@keyframes rotate-clockwise {
+			from {
+				rotate: y 0turn;
+			}
+
+			to {
+				rotate: y calc(-1 * var(--max-rotation));
+			}
+		}
+	}
+
+	& .counterclockwise {
+		animation: var(--animation-duration) linear 1ms paused rotate-counterclockwise;
+
+		@keyframes rotate-counterclockwise {
+			from {
+				rotate: y 0turn;
+			}
+
+			to {
+				rotate: y calc(var(--max-rotation));
+			}
+		}
+	}
+
+	.blocks {
+		position: relative;
+		translate: calc(-.5 * var(--columns) * var(--cube-size)) calc(-.5 * var(--layers) * var(--cube-size)) calc(-.5 * var(--rows) * var(--cube-size));
+
+		.cubes-container {
+			pointer-events: auto;
+			translate: calc(var(--column) * var(--cube-size)) calc(var(--layer) * var(--cube-size)) calc(var(--row) * var(--cube-size));
+
+			&:has(> .cube.#{list.nth($blocks, 1)} > input[type=radio]:checked) {
+				display: none;
+			}
+
+			@each $block in $blocks {
+				&:has(> .cube.#{$block} > input[type=radio]:checked) {
+					--background-image: var(--#{$block}-image);
+				}
+			}
+
+			.cube {
+				position: absolute;
+				block-size: var(--cube-size);
+				inline-size: var(--cube-size);
+
+				& > input[type=radio] {
+					position: absolute;
+					opacity: 0;
+					pointer-events: none;
+				}
+
+				& > label {
+					position: absolute;
+					inset: 0;
+					background-image: var(--background-image);
+					image-rendering: pixelated;
+					background-size: 100% 100%;
+					transform-origin: center center calc(-1 * var(--cube-size) / 2);
+					translate: 0 0 calc(var(--cube-size) / 2);
+					box-sizing: border-box;
+
+					&.front {
+						rotate: y 0grad;
+						filter: brightness(92%);
+					}
+
+					&.back {
+						rotate: y 200grad;
+						filter: brightness(68%);
+					}
+
+					&.left {
+						rotate: y 100grad;
+						filter: brightness(76%);
+					}
+
+					&.right {
+						rotate: y -100grad;
+						filter: brightness(84%);
+					}
+
+					&.top {
+						rotate: x 100grad;
+						filter: brightness(100%);
+					}
+
+					&.bottom {
+						rotate: x -100grad;
+						filter: brightness(60%);
+					}
+				}
+			}
+
+			&:has(> .cube.grass > input[type=radio]:checked) > .cube > label {
+				&.top {
+					background-image: var(--grass-top-image);
+				}
+
+				&.bottom {
+					background-image: var(--dirt-image);
+				}
+			}
+
+			&:has(> .cube.log > input[type=radio]:checked) > .cube > label {
+				&:is(.top, .bottom) {
+					background-image: var(--log-top-image);
+				}
+			}
+
+			&:has(> .cube.glass > input[type=radio]:checked) > .cube > label {
+				opacity: .72;
+				outline: 1px solid #ffffff35;
+				outline-offset: -1px;
+				box-shadow: inset 0 0 calc(var(--cube-size) / 5) #ffffff25;
+			}
+		}
+	}
+}

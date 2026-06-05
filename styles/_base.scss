@@ -1,0 +1,29 @@
+body {
+	color: white;
+	background-color: lightSkyBlue;
+	block-size: 100vh;
+	block-size: 100dvb;
+	margin: 0;
+	box-sizing: border-box;
+	font-family: system-ui, sans-serif;
+	overflow: hidden;
+
+	display: grid;
+	place-content: center center;
+}
+
+label, button {
+	cursor: pointer;
+}
+
+h1, p {
+	margin: 0;
+}
+
+h1, strong {
+	font-weight: 600;
+}
+
+a {
+	color: inherit;
+}

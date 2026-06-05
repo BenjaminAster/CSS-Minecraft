@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Generated build files
+index.html
+main.css
+main.css.map
+
+# System files
+.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

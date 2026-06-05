@@ -1,0 +1,19 @@
+{
+    "name": "css-minecraft",
+    "version": "1.3.0",
+    "description": "A Minecraft clone made with pure HTML and CSS.",
+    "private": true,
+    "scripts": {
+        "build": "pnpm build:pug && pnpm build:sass",
+        "build:pug": "pug index.pug",
+        "build:sass": "sass main.scss:main.css",
+        "dev": "concurrently \"pnpm dev:pug\" \"pnpm dev:sass\"",
+        "dev:pug": "pug index.pug -w",
+        "dev:sass": "sass main.scss:main.css -w"
+    },
+    "devDependencies": {
+        "concurrently": "^9.1.2",
+        "pug-cli": "^1.0.0-alpha6",
+        "sass": "^1.89.2"
+    }
+}

@@ -1,0 +1,46 @@
+.cubes-container > .cube > label:hover,
+.controls:has(.air > input[type=radio]:checked) ~ main .cubes-container:hover > .cube > label {
+	--outline-width: calc(var(--cube-size) / 24);
+	outline: var(--outline-width) solid white;
+	outline-offset: calc(-1 * var(--outline-width));
+}
+
+.cubes-container > .cube > label:hover {
+	filter: brightness(115%);
+}
+
+.controls:has(.air > input[type=radio]:checked) ~ main .cubes-container:hover > .cube > label {
+	outline-color: #ff6b6b;
+	filter: brightness(58%) saturate(1.2);
+}
+
+.controls:has(.air > input[type=radio]:checked) ~ main .cubes-container:hover > .cube > label::after {
+	content: "";
+	position: absolute;
+	inset: 18%;
+	border: calc(var(--cube-size) / 34) solid #ff6b6bcc;
+	border-radius: .12rem;
+	box-shadow: 0 0 calc(var(--cube-size) / 8) #ff2f2f88;
+	pointer-events: none;
+}
+
+.controls label:focus-visible,
+.controls button:focus-visible,
+.info .close:focus-visible {
+	outline: 3px solid #f7d66d;
+	outline-offset: 3px;
+}
+
+.controls .block-chooser > label.air:has(> input[type=radio]:checked) {
+	outline-color: #ff6b6b;
+	box-shadow:
+		inset .16rem .16rem 0 #ffffff30,
+		inset -.16rem -.16rem 0 #0009,
+		0 0 0 .12rem #000,
+		0 0 1rem #ff6b6baa;
+}
+
+.controls .block-chooser > label.air:has(> input[type=radio]:checked) .slot-name {
+	background-color: #3b0505f2;
+	border-color: #ff6b6b80;
+}
